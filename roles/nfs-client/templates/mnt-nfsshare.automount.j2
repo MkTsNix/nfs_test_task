@@ -1,0 +1,10 @@
+[Unit]
+Description = Automount NFS Share
+ConditionPathExists=/mnt/nfsshare
+
+[Automount]
+Where=/mnt/nfsshare
+TimeoutIdleSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,19 @@
+all:
+  children: nfs-servers
+    nfs-clients
+
+nfs-servers:
+  hosts:
+    al-nfs-srv:
+      ansible_host: 172.21.1.151
+
+    ub-nfs-srv:
+      ansible_host: 172.21.1.153
+
+nfs-clients:
+  hosts:
+    al-nfs-client:
+      ansible_host: 172.21.1.152
+
+    ub-nfs-client:
+      ansible_host: 172.21.1.154

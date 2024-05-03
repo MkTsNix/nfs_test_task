@@ -1,0 +1,9 @@
+[Unit]
+Description = NFS share
+
+[Mount]
+What = {{ NFS_SERVER }}:/mnt/nfs
+Where = /mnt/nfsshare
+Type = nfs4
+Options = rw
+DirectoryMode = 0755

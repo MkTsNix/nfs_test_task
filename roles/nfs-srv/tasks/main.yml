@@ -1,0 +1,68 @@
+---
+# tasks file for nfs-server
+##### Disk preparation #####
+- name: "Create a new primary partition"
+  parted:
+    device: /dev/vdb
+    number: 1
+    state: present
+
+- name: "Create physical volume and VolumeGroup"
+  lvg:
+    vg: nfs_vg
+    pvs: /dev/vdb1
+
+- name: "Check lvm exist"
+  stat:
+    path: /dev/nfs_vg/lv01
+  register: lvm_exist
+
+- name: Create a LogicalVolume with 100%FREE
+  lvol:
+    vg: nfs_vg
+    lv: lv01
+    size: 100%FREE
+  when: lvm_exist.stat.exists == false
+
+- name: "Create a ext4 filesystem on LV"
+  filesystem:
+    fstype: ext4
+    dev: /dev/nfs_vg/lv01
+
+##### Install and setup NFS Server #####
+- name: "Install nfs on RedHat Family OS"
+  yum:
+    name:
+      - nfs-utils
+    state: latest
+  when: ansible_os_family == "RedHat"
+  notify:
+    - restart nfs-server
+
+- name: "Install nfs on Debian Family OS"
+  apt:
+    name:
+      - nfs-kernel-server
+    state: latest
+  when: ansible_os_family == "Debian"
+  notify:
+    - restart nfs-server
+
+- name: "Create folder for nfs"
+  file:
+    path: /mnt/nfs
+    state: directory
+
+- name: "Mount disk"
+  mount:
+    path: /mnt/nfs
+    src: /dev/nfs_vg/lv01
+    fstype: ext4
+    state: mounted
+
+- name: "Prep NFS exports"
+  template:
+    src: exports.j2
+    dest: /etc/exports
+  notify:
+    - restart nfs-server

@@ -1,0 +1,10 @@
+---
+- name: "Install nfs-client and mount nfs share"
+  hosts: nfs-clients
+  become: true
+  gather_facts: true
+  vars:
+    NFS_SERVER: 172.21.1.151
+
+  roles:
+    - nfs-client

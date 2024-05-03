@@ -1,0 +1,17 @@
+---
+# handlers file for nfs-client
+- name: "systemd daemon-reload"
+  systemd:
+    daemon_reload: true
+
+- name: "restart mnt-nfsshare.mount"
+  systemd:
+    name: mnt-nfsshare.mount
+    state: restarted
+    enabled: yes
+
+- name: "restart mnt-nfsshare.automount"
+  systemd:
+    name: mnt-nfsshare.automount
+    state: restarted
+    enabled: yes

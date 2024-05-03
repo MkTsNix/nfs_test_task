@@ -1,0 +1,10 @@
+---
+- name: "Install nfs-server"
+  hosts: nfs-servers
+  become: true
+  gather_facts: true
+  vars:
+    NFS_NETWORK: 172.21.1.0/24
+
+  roles:
+    - nfs-srv

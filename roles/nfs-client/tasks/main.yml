@@ -1,0 +1,35 @@
+---
+# tasks file for nfs-client
+- name: "Install nfs on RedHat Family OS"
+  yum:
+    name:
+      - nfs-utils
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: "Install nfs on Debian Family OS"
+  apt:
+    name:
+      - nfs-common
+    state: latest
+  when: ansible_os_family == "Debian"
+
+- name: "Create mount point"
+  file:
+    path: /mnt/nfsshare
+    state: directory
+
+- name: "Create mount unit on servers"
+  template:
+    src: mnt-nfsshare.mount.j2
+    dest: /etc/systemd/system/mnt-nfsshare.mount
+  notify:
+    - systemd daemon-reload
+
+- name: "Create and start automount unit on servers"
+  template:
+    src: mnt-nfsshare.automount.j2
+    dest: /etc/systemd/system/mnt-nfsshare.automount
+  notify:
+    - systemd daemon-reload
+    - restart mnt-nfsshare.automount
